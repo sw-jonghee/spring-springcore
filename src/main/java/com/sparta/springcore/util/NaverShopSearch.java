@@ -1,4 +1,6 @@
-package com.sparta.springcore;
+package com.sparta.springcore.util;
+
+import com.sparta.springcore.dto.ItemDto;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,8 +32,8 @@ public class NaverShopSearch {
     }
 
     public List<ItemDto> fromJSONtoItems(String result) {
-        JSONObject rjson = new JSONObject(result);
-        JSONArray items  = rjson.getJSONArray("items");
+        JSONObject json = new JSONObject(result);
+        JSONArray items  = json.getJSONArray("items");
         List<ItemDto> ret = new ArrayList<>();
         for (int i=0; i<items.length(); i++) {
             JSONObject itemJson = (JSONObject) items.get(i);
@@ -39,5 +41,6 @@ public class NaverShopSearch {
             ret.add(itemDto);
         }
         return ret;
+
     }
 }
