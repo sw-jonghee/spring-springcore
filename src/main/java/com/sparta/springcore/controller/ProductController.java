@@ -6,13 +6,14 @@ import com.sparta.springcore.security.UserDetailsImpl;
 import com.sparta.springcore.service.ProductService;
 import com.sparta.springcore.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.sql.*;
 import java.util.List;
 
-//@RequiredArgsConstructor // final로 선언된 멤버 변수를 자동으로 생성합니다.
+//@RequiredArgsConstructor // final로  선언된멤버 변수를 자동으로 생성합니다.
 @RestController // JSON으로 데이터를 주고받음을 선언합니다.
 public class ProductController {
     // 멤버 변수 선언
@@ -36,9 +37,15 @@ public class ProductController {
 
     // 로그인한 회원이 등록한 상품들 조회
     @GetMapping("/api/products")
-    public List<Product> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public Page<Product> getProducts(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getUser().getId();
-        return productService.getProducts(userId);
+        page = page - 1;
+        return productService.getProducts(userId, page, size, sortBy, isAsc);
     }
 
     // 신규 상품 등록

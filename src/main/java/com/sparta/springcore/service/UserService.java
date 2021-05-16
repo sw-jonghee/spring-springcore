@@ -81,18 +81,25 @@ public class UserService {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
-        //TODO: 숙제 : 동일 email을 가진 회원이 존재하면  동일 email 회워의 kakao id를 update -> 회원 로그인한다.
-
 
         // 카카오 정보로 회원가입
         if (kakaoUser == null) {
-            // 패스워드 인코딩
-            String encodedPassword = passwordEncoder.encode(password);
-            // ROLE = 사용자
-            UserRole role = UserRole.USER;
+            //TODO: 숙제 : 동일 email을 가진 회원이 존재하면  동일 email 회워의 kakao id를 update -> 회원 로그인한다.
+            User kakaoUserByEmail = userRepository.findByEmail(email)
+                    .orElse(null);
 
-            kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
-            userRepository.save(kakaoUser);
+            if(kakaoUserByEmail == null) {
+                // 패스워드 인코딩
+                String encodedPassword = passwordEncoder.encode(password);
+                // ROLE = 사용자
+                UserRole role = UserRole.USER;
+
+                kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
+                userRepository.save(kakaoUser);
+            } else {
+                kakaoUserByEmail.setKakaoId(kakaoId);
+                userRepository.save(kakaoUserByEmail);
+            }
         }
 
         // 로그인 처리 (스프링 시큐리티)
