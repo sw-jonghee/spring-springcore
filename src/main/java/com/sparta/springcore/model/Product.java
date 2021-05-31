@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Setter
 @Getter // get 함수를 일괄적으로 만들어줍니다.
@@ -38,6 +39,13 @@ public class Product extends Timestamped {
 
     @Column(nullable = false)
     private Long userId;
+
+    //프로덕트 입장에서도 폴더를 여러개 가질수 있으며, 폴더 입장에서도 프로덕트를 여러개 가질 수 있는 관계
+    //n:n관계를 저장할 수 있는 테이블이 자동으로 생성되는 이유는
+    //application.properties 파일의 spring.jpa.hibernate.ddl-auto=update --> 실제 개발때는 사용하지 x
+    //설정 으로 가능하다.
+    @ManyToMany
+    private List<Folder> folderList;
 
     // 관심 상품 생성 시 이용합니다.
 //    public Product(ProductRequestDto requestDto, Long userId) {
@@ -92,4 +100,8 @@ public class Product extends Timestamped {
 
     // 관심 상품의 가격 변경 시 사용됩니다.
     public void updateMyPrice(int price) { this.myprice = price;}
+
+    public void addFolder(Folder folder){
+        this.folderList.add(folder);
+    }
 }

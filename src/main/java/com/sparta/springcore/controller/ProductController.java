@@ -2,6 +2,7 @@ package com.sparta.springcore.controller;
 
 import com.sparta.springcore.dto.ProductMypriceRequestDto;
 import com.sparta.springcore.dto.ProductRequestDto;
+import com.sparta.springcore.model.User;
 import com.sparta.springcore.security.UserDetailsImpl;
 import com.sparta.springcore.service.ProductService;
 import com.sparta.springcore.model.Product;
@@ -83,10 +84,21 @@ public class ProductController {
 
 
     // (관리자용) 등록된 모든 상품 목록 조회
-    // (관리자용) 등록된 모든 상품 목록 조회
     @Secured("ROLE_ADMIN")
     @GetMapping("/api/admin/products")
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public Page<Product> getAllProducts(@RequestParam("page") int page,
+                                        @RequestParam("size") int size,
+                                        @RequestParam("sortBy") String sortBy,
+                                        @RequestParam("isAsc") boolean isAsc) {
+        return productService.getAllProducts(page, size, sortBy, isAsc);
+    }
+
+    @PostMapping("/api/products/{id}/folder")
+    public Long addFolder(@PathVariable Long id,
+                          @RequestParam("folderId") Long folderId,
+                          @AuthenticationPrincipal UserDetailsImpl userDetails){
+        User user = userDetails.getUser();
+        Product product = productService.addFolder(id, folderId, user);
+        return product.getId();
     }
 }
