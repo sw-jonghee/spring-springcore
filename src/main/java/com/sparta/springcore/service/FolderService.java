@@ -1,5 +1,6 @@
 package com.sparta.springcore.service;
 
+import com.sparta.springcore.exception.ApiRequestException;
 import com.sparta.springcore.model.Folder;
 import com.sparta.springcore.model.Product;
 import com.sparta.springcore.model.User;
@@ -78,7 +79,7 @@ public class FolderService {
      *******////
 
     //2) @Transactional을 이용
-    @Transactional
+    @Transactional(readOnly = false)
     public List<Folder> createFolders(List<String> folderNameList, User user){
         List<Folder> folderList = new ArrayList<>();
 
@@ -88,7 +89,8 @@ public class FolderService {
 
             if(folderInDB != null) {
                 //db에 중복 폴더명 존재한다면 exception 발생시킴
-                throw new IllegalArgumentException("중복된 폴더명 (" + folderName + ") 을 삭제하고 재시도 해주세요!");
+                //throw new IllegalArgumentException("중복된 폴더명 (" + folderName + ") 을 삭제하고 재시도 해주세요!");
+                throw new ApiRequestException("중복된 폴더명 (" + folderName + ") 을 삭제하고 재시도 해주세요!");
             }
 
             // 2) 폴더를 db에 저장
